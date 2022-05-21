@@ -13,6 +13,8 @@ function point(x, y) {
 
 const Canvas = (props) => {
 	const canvasRef = useRef(null)
+	const canvasWidth = props.canvaswidth
+	const canvasHeight = props.canvasheight
 	const xPos = props.xvalue
 	const yPos = props.yvalue
 	const radius = props.radius
@@ -61,8 +63,8 @@ const Canvas = (props) => {
 		<canvas
 			ref={canvasRef}
 			className='bg-slate-100 rounded-lg'
-			height={500}
-			width={750}
+			height={canvasHeight}
+			width={canvasWidth}
 			{...props}
 		/>
 	)
