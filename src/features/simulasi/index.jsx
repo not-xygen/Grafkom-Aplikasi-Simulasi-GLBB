@@ -1,1 +1,1 @@
-export { default } from './canvas'
+export { Canvas, CanvasState, VerticalState, HorizontalState } from './canvas'

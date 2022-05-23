@@ -1,56 +1,24 @@
-import { useState } from 'react'
-import Canvas from '@features/simulasi'
+import { Canvas, CanvasState } from '@features/simulasi'
 import { Slider, InputField, Button } from '@features/ui'
 
 export function Page() {
-	const [x, setX] = useState(375)
-	const [y, setY] = useState(250)
-	const [velocity, setVelocity] = useState(0)
-	const [friction, setFriction] = useState(1)
-	const [accel, setAccel] = useState(10)
+	const state = new CanvasState()
+	const { x, setX, y, setY } = state
+
+	let { velocity, setVelocity } = state.horizontal
 	const canvasWidth = 750
 	const canvasHeight = 500
-	const radius = Math.sqrt(y + 100)
 
-	function affectGravity(duration) {
-		window.setInterval(() => {
-			if (y != canvasHeight || accel != 0) {
-				setY(y + accel)
-				if (y > canvasHeight) {
-					setY(Math.max(0, Math.min(y, canvasHeight)))
-					setAccel(accel * -1)
-					setAccel((accel * 0.5).floor())
-				}
-				setAccel(accel + 1)
-			} else {
-				window.clearInterval()
-			}
-		}, duration)
+	function affectGravity() {
+		state.playVertical()
 	}
 
-	console.log(velocity)
-
-	function affectToTheLeft(duration) {
-		window.setInterval(() => {
-			if (velocity > 0) {
-				if (x - velocity >= canvasWidth || x - velocity <= 0) {
-					setVelocity(velocity * -1)
-					setFriction(friction * -1)
-				}
-				setX(x - velocity)
-				setVelocity(velocity - friction)
-			} else {
-				setVelocity(0)
-				window.clearInterval()
-			}
-		}, duration)
+	function affectToTheLeft() {
+		state.playHorizontal(-1)
 	}
 
 	function affectToTheRight() {
-		if (velocity > 0 && x < 750) {
-			setX(x + velocity)
-			setVelocity(velocity - friction)
-		}
+		state.playHorizontal(1)
 	}
 
 	return (
@@ -60,11 +28,9 @@ export function Page() {
 			</h1>
 			<div className='flex justify-center items-center'>
 				<Canvas
-					xvalue={x}
-					yvalue={y}
+					state={state}
 					canvaswidth={canvasWidth}
 					canvasheight={canvasHeight}
-					radius={radius}
 				/>
 				<div className='w-72 m-2 p-2'>
 					<Slider
@@ -87,14 +53,8 @@ export function Page() {
 						minValue={1}
 						onChangeValue={setVelocity}
 					/>
-					{/* <InputField
-						labelName={'Friction'}
-						value={friction}
-						minValue={1}
-						onChangeValue={setFriction}
-					/> */}
 					<div className='flex'>
-						<Button labelName={'<<'} func={affectToTheLeft(100)} />
+						<Button labelName={'<<'} func={affectToTheLeft} />
 						<Button labelName={'V'} func={affectGravity} />
 						<Button labelName={'>>'} func={affectToTheRight} />
 					</div>
